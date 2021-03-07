@@ -2,12 +2,9 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  /* width: 7rem;
-  height: 2rem; */
   border: none;
   background-color: #198754;
   border-radius: .2rem;
-  color: rgb(212, 200, 33);
   outline: none;
   cursor: pointer;
   padding: .5rem;
@@ -18,7 +15,7 @@
   background-color: #0f683e;
 }
 .btn_icon {
-  color: rgb(219, 206, 20);
+  color: rgb(255, 255, 255);
 }
 .none {
   display: none;
