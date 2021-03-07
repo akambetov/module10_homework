@@ -1,6 +1,10 @@
 body {
   background-color:black;
 }
+a {
+  color: #fff;
+  
+}
 .container {
   max-width: 1200px;
   width: 100%;
@@ -22,7 +26,7 @@ body {
 .form__control {
   display: flex;
   flex-direction: column;
-  width: 70%;
+  width: 50%;
   margin-bottom: 2rem;
 }
 input.form__item {

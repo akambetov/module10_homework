@@ -8,7 +8,7 @@ const form = document.querySelector(".form");
 
 function writeToScreen(message, isSend = true, isError = false) {
   let pre = document.createElement("p");
-  pre.innerHTML = message;
+  pre.insertAdjacentHTML("afterbegin", message);
   pre.classList.add("message");
   isSend
     ? pre.classList.add("message-send")
@@ -34,6 +34,7 @@ function conntection() {
     };
     websocket.onmessage = function (e) {
       const isSend = false;
+      if (e.data.includes("www.openstreetmap.org")) return;
       const receivedMessage = `<span class="received-message">RESPONSE: ${e.data}</span>`;
       writeToScreen(receivedMessage, isSend);
     };
@@ -47,22 +48,55 @@ window.addEventListener("load", conntection);
 connectButton.addEventListener("click", conntection);
 form.addEventListener("submit", (e) => {
   e.preventDefault();
-  sendMessage(msgField.value);
+  sendMessage();
 });
 exitButton.addEventListener("click", exitChat);
 
-function sendMessage() {
-  if (websocket) {
+function sendMessage(msg = "") {
+  if (websocket && msg) {
+    websocket.send(msg);
+    writeToScreen(msg);
+  } else if (websocket && !msg && msgField.value) {
     websocket.send(msgField.value);
     writeToScreen(`SENT: ${msgField.value}`);
-  } else
+  } else if (!websocket) {
     writeToScreen(
       `<div>Пдключись к чату</div>`,
       (isSend = false),
       (isError = true)
     );
+  }
 }
 function exitChat() {
   websocket.close();
   websocket = null;
 }
+
+const geoButton = document.querySelector("#geo");
+const error = () => {
+  writeToScreen(
+    `<div>Невозможно получить ваше местоположение</div>`,
+    (isSend = false),
+    (isError = true)
+  );
+};
+
+const success = (position) => {
+  const latitude = position.coords.latitude;
+  const longitude = position.coords.longitude;
+  const geoLink = `<a href="https://www.openstreetmap.org/#map=18/${latitude}/${longitude}" target="_blank">Геолокация</a>`;
+  sendMessage(geoLink);
+  // return geoLink;
+};
+
+geoButton.addEventListener("click", () => {
+  if (!navigator.geolocation) {
+    writeToScreen(
+      `<div>Geolocation не поддерживается вашим браузером</div>`,
+      (isSend = false),
+      (isError = true)
+    );
+  } else {
+    navigator.geolocation.getCurrentPosition(success, error);
+  }
+});
